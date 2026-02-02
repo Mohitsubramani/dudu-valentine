@@ -1,0 +1,12 @@
+# Firebase
+.firebase/
+.firebase.json
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+
+# Node modules (future safe)
+node_modules/
