@@ -13,12 +13,20 @@ const hintEl = document.getElementById("hint");
 const progressEl = document.getElementById("progress");
 const dudu = document.getElementById("dudu");
 const optionsContainer = document.getElementById("optionsContainer");
+const nextBtn = document.getElementById("nextBtn");
+const statTotal = document.getElementById("statTotal");
+const statPassed = document.getElementById("statPassed");
+const statCorrect = document.getElementById("statCorrect");
+const statWrong = document.getElementById("statWrong");
 
 const defaultDudu = "./public/dudu/happy.png";
 
 let questions = [];
 let currentIndex = 0;
 let isLocked = false;
+let passedCount = 0;
+let correctCount = 0;
+let wrongCount = 0;
 
 /* ---------- Question Animation ---------- */
 function animateQuestion(type = "fade-in") {
@@ -57,6 +65,13 @@ function disableOptions(disabled) {
   });
 }
 
+function updateStats() {
+  statTotal.textContent = questions.length.toString();
+  statPassed.textContent = passedCount.toString();
+  statCorrect.textContent = correctCount.toString();
+  statWrong.textContent = wrongCount.toString();
+}
+
 async function saveAnswer(answer, isCorrect) {
   const q = questions[currentIndex];
   if (!q) return;
@@ -79,18 +94,20 @@ function handleAnswer(answer) {
   if (isLocked) return;
   isLocked = true;
   disableOptions(true);
+  nextBtn.style.display = "inline-block";
+  nextBtn.disabled = false;
 
   const q = questions[currentIndex];
   if (!q) return;
 
   const isCorrect = answer === q.correctAnswer;
-
-  resetDuduAnimation();
-
-  const animClass = isCorrect ? q.happyAnim : q.angryAnim;
-  if (animClass) {
-    dudu.classList.add(animClass);
+  passedCount += 1;
+  if (isCorrect) {
+    correctCount += 1;
+  } else {
+    wrongCount += 1;
   }
+  updateStats();
 
   const gifPath = isCorrect ? q.happyGif : q.angryGif;
   if (gifPath) {
@@ -99,7 +116,6 @@ function handleAnswer(answer) {
 
   saveAnswer(answer, isCorrect);
 
-  setTimeout(nextQuestion, 700);
 }
 
 function renderOptions(question) {
@@ -137,6 +153,8 @@ function showQuestion() {
   animateQuestion(q.questionAnimation || "fade-in");
   renderOptions(q);
   disableOptions(false);
+  nextBtn.style.display = "none";
+  nextBtn.disabled = true;
 
   hintEl.textContent = q.type === "mcq" ? "Choose one option 💫" : "Pick Yes or No 💕";
   progressEl.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
@@ -149,6 +167,11 @@ function showEmptyState() {
   hintEl.textContent = "Ask the admin to add some questions.";
   progressEl.textContent = "";
   optionsContainer.innerHTML = "";
+  nextBtn.style.display = "none";
+  passedCount = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  updateStats();
 }
 
 function nextQuestion() {
@@ -161,8 +184,15 @@ function nextQuestion() {
     hintEl.textContent = "";
     progressEl.textContent = "";
     optionsContainer.innerHTML = "";
+    nextBtn.style.display = "none";
   }
 }
+
+nextBtn.addEventListener("click", () => {
+  if (!isLocked) return;
+  nextBtn.disabled = true;
+  nextQuestion();
+});
 
 function normalizeQuestion(doc) {
   const data = doc.data();
@@ -192,6 +222,10 @@ onSnapshot(questionsQuery, snapshot => {
   }
 
   currentIndex = 0;
+  passedCount = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  updateStats();
   showQuestion();
 });
 

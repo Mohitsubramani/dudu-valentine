@@ -35,6 +35,20 @@ body {
   box-shadow: var(--shadow);
 }
 
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 18px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.stats strong {
+  color: var(--text);
+}
+
 #question {
   font-size: 24px;
   margin: 0 0 8px;
@@ -94,6 +108,25 @@ body {
   margin-top: 14px;
   font-size: 13px;
   color: var(--muted);
+}
+
+.next-btn {
+  margin-top: 14px;
+  padding: 10px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 12px;
+  background: var(--pink);
+  color: #fff;
+  cursor: pointer;
+  display: none;
+  box-shadow: 0 8px 18px rgba(255, 77, 136, 0.35);
+}
+
+.next-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* Question animations */
