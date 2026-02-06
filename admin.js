@@ -71,6 +71,10 @@ function normalizeGifField(value, type) {
 		cleaned = `dudu/${type}/${cleaned}`;
 	}
 
+	if (!/\.(gif|png|jpg|jpeg|webp)$/i.test(cleaned)) {
+		cleaned = `${cleaned}.gif`;
+	}
+
 	return cleaned;
 }
 

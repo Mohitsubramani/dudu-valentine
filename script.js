@@ -64,6 +64,10 @@ function normalizeGifInput(value, prefix = "") {
     cleaned = `${prefix}/${cleaned}`;
   }
 
+  if (!/\.(gif|png|jpg|jpeg|webp)$/i.test(cleaned)) {
+    cleaned = `${cleaned}.gif`;
+  }
+
   return cleaned;
 }
 
