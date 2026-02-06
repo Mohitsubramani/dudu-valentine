@@ -47,8 +47,14 @@ function normalizeGifInput(value, prefix = "") {
   if (!value) return "";
   let cleaned = value.trim();
 
+  cleaned = cleaned.replace(/^\.\/public\//, "");
+  cleaned = cleaned.replace(/^\/public\//, "");
+  cleaned = cleaned.replace(/^public\//, "");
+
   cleaned = cleaned.replace(/^dudu\/anger\b/, "dudu/angry");
+  cleaned = cleaned.replace(/^dudu\/sad\b/, "dudu/angry");
   cleaned = cleaned.replace(/^anger\//, "angry/");
+  cleaned = cleaned.replace(/^sad\//, "angry/");
 
   if (cleaned.startsWith("happy/") || cleaned.startsWith("angry/")) {
     cleaned = `dudu/${cleaned}`;
