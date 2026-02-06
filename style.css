@@ -110,6 +110,20 @@ body {
   color: var(--muted);
 }
 
+.result {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.result.good {
+  color: #0f7a3d;
+}
+
+.result.bad {
+  color: #a11d2f;
+}
+
 .next-btn {
   margin-top: 14px;
   padding: 10px 18px;

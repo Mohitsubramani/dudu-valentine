@@ -50,6 +50,24 @@ function parseOptions() {
 		.filter(Boolean);
 }
 
+function normalizeGifField(value, type) {
+	if (!value) return "";
+	let cleaned = value.trim();
+
+	cleaned = cleaned.replace(/^dudu\/anger\b/, "dudu/angry");
+	cleaned = cleaned.replace(/^anger\//, "angry/");
+
+	if (cleaned.startsWith("happy/") || cleaned.startsWith("angry/")) {
+		cleaned = `dudu/${cleaned}`;
+	}
+
+	if (!cleaned.includes("/")) {
+		cleaned = `dudu/${type}/${cleaned}`;
+	}
+
+	return cleaned;
+}
+
 function getCorrectAnswer(type, options) {
 	if (type === "yesno") {
 		return qCorrectYesNo.value;
@@ -112,8 +130,8 @@ questionForm.addEventListener("submit", async event => {
 		questionAnimation: qQuestionAnimation.value,
 		happyAnim: qHappyAnim.value,
 		angryAnim: qAngryAnim.value,
-		happyGif: qHappyGif.value.trim(),
-		angryGif: qAngryGif.value.trim(),
+		happyGif: normalizeGifField(qHappyGif.value, "happy"),
+		angryGif: normalizeGifField(qAngryGif.value, "angry"),
 		order: Number(qOrder.value) || 0,
 		active: qActive.value === "true",
 		updatedAt: serverTimestamp()

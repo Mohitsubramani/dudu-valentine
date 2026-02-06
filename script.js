@@ -14,6 +14,7 @@ const progressEl = document.getElementById("progress");
 const dudu = document.getElementById("dudu");
 const optionsContainer = document.getElementById("optionsContainer");
 const nextBtn = document.getElementById("nextBtn");
+const resultEl = document.getElementById("result");
 const statTotal = document.getElementById("statTotal");
 const statPassed = document.getElementById("statPassed");
 const statCorrect = document.getElementById("statCorrect");
@@ -42,6 +43,24 @@ function resetDuduAnimation() {
   void dudu.offsetHeight;  // 🔥 force reflow
 }
 
+function normalizeGifInput(value, prefix = "") {
+  if (!value) return "";
+  let cleaned = value.trim();
+
+  cleaned = cleaned.replace(/^dudu\/anger\b/, "dudu/angry");
+  cleaned = cleaned.replace(/^anger\//, "angry/");
+
+  if (cleaned.startsWith("happy/") || cleaned.startsWith("angry/")) {
+    cleaned = `dudu/${cleaned}`;
+  }
+
+  if (!cleaned.includes("/") && prefix) {
+    cleaned = `${prefix}/${cleaned}`;
+  }
+
+  return cleaned;
+}
+
 function resolveGifPath(value) {
   if (!value) return "";
   if (value.startsWith("http")) return value;
@@ -49,9 +68,10 @@ function resolveGifPath(value) {
   return `./public/${value}`;
 }
 
-function setDuduImage(src, bust = false) {
-  if (!src) return;
-  const resolved = resolveGifPath(src);
+function setDuduImage(src, bust = false, prefix = "") {
+  const normalized = normalizeGifInput(src, prefix);
+  if (!normalized) return;
+  const resolved = resolveGifPath(normalized);
   const url = bust
     ? `${resolved}${resolved.includes("?") ? "&" : "?"}v=${Date.now()}`
     : resolved;
@@ -109,9 +129,14 @@ function handleAnswer(answer) {
   }
   updateStats();
 
+  resultEl.textContent = isCorrect ? "Right ✅" : "Wrong ❌";
+  resultEl.classList.toggle("good", isCorrect);
+  resultEl.classList.toggle("bad", !isCorrect);
+
   const gifPath = isCorrect ? q.happyGif : q.angryGif;
+  const gifPrefix = isCorrect ? "dudu/happy" : "dudu/angry";
   if (gifPath) {
-    setDuduImage(gifPath, true);
+    setDuduImage(gifPath, true, gifPrefix);
   }
 
   saveAnswer(answer, isCorrect);
@@ -155,6 +180,8 @@ function showQuestion() {
   disableOptions(false);
   nextBtn.style.display = "none";
   nextBtn.disabled = true;
+  resultEl.textContent = "";
+  resultEl.classList.remove("good", "bad");
 
   hintEl.textContent = q.type === "mcq" ? "Choose one option 💫" : "Pick Yes or No 💕";
   progressEl.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
@@ -168,6 +195,8 @@ function showEmptyState() {
   progressEl.textContent = "";
   optionsContainer.innerHTML = "";
   nextBtn.style.display = "none";
+  resultEl.textContent = "";
+  resultEl.classList.remove("good", "bad");
   passedCount = 0;
   correctCount = 0;
   wrongCount = 0;
@@ -185,6 +214,8 @@ function nextQuestion() {
     progressEl.textContent = "";
     optionsContainer.innerHTML = "";
     nextBtn.style.display = "none";
+    resultEl.textContent = "";
+    resultEl.classList.remove("good", "bad");
   }
 }
 
