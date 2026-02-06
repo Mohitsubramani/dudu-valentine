@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Dudu Admin</title>
+	<link rel="stylesheet" href="./style.css" />
+</head>
+<body class="admin-body">
+	<div class="admin-container">
+		<header class="admin-header">
+			<h1>Dudu Admin Panel</h1>
+			<span class="badge">Private</span>
+		</header>
+
+		<div class="admin-grid">
+			<section class="panel">
+				<h2>Manage Questions</h2>
+
+				<form id="questionForm" class="form">
+					<div class="field">
+						<label for="qText">Question Text</label>
+						<textarea id="qText" required></textarea>
+					</div>
+
+					<div class="row">
+						<div class="field">
+							<label for="qType">Question Type</label>
+							<select id="qType">
+								<option value="yesno">Yes / No</option>
+								<option value="mcq">Multiple Choice (MCQ)</option>
+							</select>
+						</div>
+
+						<div class="field" id="mcqOptionsField">
+							<label for="qOptions">MCQ Options (comma separated)</label>
+							<input id="qOptions" placeholder="You, Pizza, Sleep, Phone" />
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="field" id="correctYesNoField">
+							<label for="qCorrectYesNo">Correct Answer (Yes/No)</label>
+							<select id="qCorrectYesNo">
+								<option value="yes">Yes</option>
+								<option value="no">No</option>
+							</select>
+						</div>
+
+						<div class="field" id="correctMcqField">
+							<label for="qCorrectMcq">Correct Answer (MCQ)</label>
+							<input id="qCorrectMcq" placeholder="You" />
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="field">
+							<label for="qQuestionAnimation">Question Animation</label>
+							<select id="qQuestionAnimation">
+								<option value="fade-in">Fade In</option>
+								<option value="slide-up">Slide Up</option>
+								<option value="scale-pop">Scale Pop</option>
+							</select>
+						</div>
+
+						<div class="field">
+							<label for="qHappyAnim">Dudu Happy Animation</label>
+							<select id="qHappyAnim">
+								<option value="dudu-happy">Jump</option>
+								<option value="dudu-spin">Spin</option>
+							</select>
+						</div>
+
+						<div class="field">
+							<label for="qAngryAnim">Dudu Angry Animation</label>
+							<select id="qAngryAnim">
+								<option value="dudu-angry">Shake</option>
+								<option value="dudu-cry">Cry</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="field">
+							<label for="qHappyGif">Happy GIF (optional)</label>
+							<input id="qHappyGif" placeholder="dudu/happy/jump.gif" />
+						</div>
+						<div class="field">
+							<label for="qAngryGif">Angry GIF (optional)</label>
+							<input id="qAngryGif" placeholder="dudu/angry/cry.gif" />
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="field">
+							<label for="qOrder">Order</label>
+							<input id="qOrder" type="number" min="0" value="0" />
+						</div>
+
+						<div class="field">
+							<label for="qActive">Active</label>
+							<select id="qActive">
+								<option value="true">Yes</option>
+								<option value="false">No</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="actions">
+						<button class="btn-primary" type="submit">Save Question</button>
+						<button class="btn-secondary" type="button" id="cancelEdit">Cancel</button>
+					</div>
+				</form>
+
+				<div id="questionsList" class="list"></div>
+			</section>
+
+			<section class="panel">
+				<h2>Responses</h2>
+				<div id="responsesList" class="list"></div>
+			</section>
+		</div>
+	</div>
+
+	<script type="module" src="./admin.js"></script>
+</body>
+</html>
