@@ -15,6 +15,10 @@ import {
 const questionForm = document.getElementById("questionForm");
 const questionsList = document.getElementById("questionsList");
 const responsesList = document.getElementById("responsesList");
+const toggleResponses = document.getElementById("toggleResponses");
+const statAdminCorrect = document.getElementById("statAdminCorrect");
+const statAdminWrong = document.getElementById("statAdminWrong");
+const statAdminTotal = document.getElementById("statAdminTotal");
 
 const qText = document.getElementById("qText");
 const qType = document.getElementById("qType");
@@ -35,6 +39,7 @@ const correctMcqField = document.getElementById("correctMcqField");
 
 let editingId = null;
 let cachedQuestions = [];
+let responsesVisible = false;
 
 function updateTypeUI() {
 	const isMcq = qType.value === "mcq";
@@ -256,12 +261,23 @@ function renderResponses(list) {
 	responsesList.innerHTML = "";
 	if (!list.length) {
 		responsesList.innerHTML = "<div class='item'>No responses yet.</div>";
+		statAdminCorrect.textContent = "0";
+		statAdminWrong.textContent = "0";
+		statAdminTotal.textContent = "0";
 		return;
 	}
 
+	const correctCount = list.filter(item => item.correct).length;
+	const totalCount = list.length;
+	const wrongCount = totalCount - correctCount;
+
+	statAdminCorrect.textContent = correctCount.toString();
+	statAdminWrong.textContent = wrongCount.toString();
+	statAdminTotal.textContent = totalCount.toString();
+
 	list.forEach(item => {
 		const div = document.createElement("div");
-		div.className = "item";
+		div.className = "item is-clickable";
 		div.innerHTML = `
 			<div class="item-header">
 				<div>
@@ -273,10 +289,24 @@ function renderResponses(list) {
 				</div>
 			</div>
 			<div class="item-meta">Answer: ${item.answer || "-"}</div>
+			<div class="item-details">
+				<div>Type: ${item.type || "-"}</div>
+				<div>User answer: ${item.answer || "-"}</div>
+				<div>Expected: ${item.correct ? "Matched" : "Not matched"}</div>
+			</div>
 		`;
+		div.addEventListener("click", () => {
+			div.classList.toggle("show-details");
+		});
 		responsesList.appendChild(div);
 	});
 }
+
+toggleResponses.addEventListener("click", () => {
+	responsesVisible = !responsesVisible;
+	responsesList.classList.toggle("is-collapsed", !responsesVisible);
+	toggleResponses.textContent = responsesVisible ? "Hide" : "Show all";
+});
 
 updateTypeUI();
 resetForm();

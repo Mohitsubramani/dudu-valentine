@@ -115,8 +115,16 @@
 			</section>
 
 			<section class="panel">
-				<h2>Responses</h2>
-				<div id="responsesList" class="list"></div>
+				<div class="responses-header">
+					<h2>Responses</h2>
+					<button id="toggleResponses" class="btn-secondary" type="button">Show all</button>
+				</div>
+				<div class="responses-summary">
+					<span>Correct: <strong id="statAdminCorrect">0</strong></span>
+					<span>Wrong: <strong id="statAdminWrong">0</strong></span>
+					<span>Total: <strong id="statAdminTotal">0</strong></span>
+				</div>
+				<div id="responsesList" class="list is-collapsed"></div>
 			</section>
 		</div>
 	</div>

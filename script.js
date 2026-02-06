@@ -21,6 +21,7 @@ const statCorrect = document.getElementById("statCorrect");
 const statWrong = document.getElementById("statWrong");
 
 const defaultDudu = "./public/dudu/happy.png";
+const finalGif = "./public/dudu/final/tenor-final.gif";
 
 let questions = [];
 let currentIndex = 0;
@@ -258,6 +259,7 @@ function nextQuestion() {
     nextBtn.style.display = "none";
     resultEl.textContent = "";
     resultEl.classList.remove("good", "bad");
+    setDuduImage(finalGif, true);
   }
 }
 
