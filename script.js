@@ -81,11 +81,43 @@ function resolveGifPath(value) {
 function setDuduImage(src, bust = false, prefix = "") {
   const normalized = normalizeGifInput(src, prefix);
   if (!normalized) return;
-  const resolved = resolveGifPath(normalized);
-  const url = bust
-    ? `${resolved}${resolved.includes("?") ? "&" : "?"}v=${Date.now()}`
-    : resolved;
-  dudu.src = url;
+
+  const candidates = [];
+  if (normalized.startsWith("http") || normalized.startsWith("./") || normalized.startsWith("/")) {
+    candidates.push(normalized);
+    if (normalized.includes("/public/")) {
+      candidates.push(normalized.replace("/public/", "/"));
+    }
+    if (normalized.startsWith("./public/")) {
+      candidates.push(`./${normalized.slice("./public/".length)}`);
+    }
+  } else {
+    candidates.push(`./public/${normalized}`);
+    candidates.push(`./${normalized}`);
+  }
+
+  const resolvedCandidates = candidates.map(item => {
+    const resolved = resolveGifPath(item);
+    return bust
+      ? `${resolved}${resolved.includes("?") ? "&" : "?"}v=${Date.now()}`
+      : resolved;
+  });
+
+  let index = 0;
+  const tryNext = () => {
+    if (index >= resolvedCandidates.length) {
+      dudu.src = defaultDudu;
+      return;
+    }
+    dudu.src = resolvedCandidates[index];
+    index += 1;
+  };
+
+  dudu.onerror = () => {
+    tryNext();
+  };
+
+  tryNext();
 }
 
 function disableOptions(disabled) {
