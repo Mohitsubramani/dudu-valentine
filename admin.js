@@ -276,25 +276,25 @@ function renderResponses(list) {
 	statAdminTotal.textContent = totalCount.toString();
 
 	const grouped = list.reduce((acc, item) => {
-		const key = item.sessionId || "unknown";
+		const key = item.responseId || "unknown";
 		if (!acc[key]) acc[key] = [];
 		acc[key].push(item);
 		return acc;
 	}, {});
 
-	const sessions = Object.entries(grouped).map(([sessionId, items]) => {
+	const sessions = Object.entries(grouped).map(([responseId, items]) => {
 		const latest = items.reduce((max, current) => {
 			if (!max) return current;
 			return (current.time?.toDate?.() || 0) > (max.time?.toDate?.() || 0) ? current : max;
 		}, null);
-		return { sessionId, items, latest };
+		return { responseId, items, latest };
 	}).sort((a, b) => {
 		const aTime = a.latest?.time?.toDate?.() || 0;
 		const bTime = b.latest?.time?.toDate?.() || 0;
 		return bTime - aTime;
 	});
 
-	sessions.forEach(session => {
+	sessions.forEach((session, index) => {
 		const sessionCorrect = session.items.filter(item => item.correct).length;
 		const sessionTotal = session.items.length;
 		const sessionWrong = sessionTotal - sessionCorrect;
@@ -304,7 +304,7 @@ function renderResponses(list) {
 		div.innerHTML = `
 			<div class="item-header">
 				<div>
-					<div class="item-title">Response ${session.sessionId}</div>
+					<div class="item-title">Response ${sessions.length - index}</div>
 					<div class="item-meta">${formatTime(session.latest?.time)}</div>
 				</div>
 				<div class="badge ${sessionWrong === 0 ? "status-good" : "status-bad"}">

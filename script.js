@@ -22,9 +22,7 @@ const statWrong = document.getElementById("statWrong");
 
 const defaultDudu = "./public/dudu/happy.png";
 const finalGif = "./public/dudu/final/tenor-final.gif";
-const sessionKey = "duduResponseSessionId";
-const sessionId = localStorage.getItem(sessionKey) || `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-localStorage.setItem(sessionKey, sessionId);
+const responseId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 let questions = [];
 let currentIndex = 0;
@@ -144,7 +142,7 @@ async function saveAnswer(answer, isCorrect) {
 
   try {
     await addDoc(collection(db, "responses"), {
-      sessionId,
+      responseId,
       questionId: q.id || null,
       questionText: q.text,
       type: q.type,
