@@ -275,24 +275,51 @@ function renderResponses(list) {
 	statAdminWrong.textContent = wrongCount.toString();
 	statAdminTotal.textContent = totalCount.toString();
 
-	list.forEach(item => {
+	const grouped = list.reduce((acc, item) => {
+		const key = item.sessionId || "unknown";
+		if (!acc[key]) acc[key] = [];
+		acc[key].push(item);
+		return acc;
+	}, {});
+
+	const sessions = Object.entries(grouped).map(([sessionId, items]) => {
+		const latest = items.reduce((max, current) => {
+			if (!max) return current;
+			return (current.time?.toDate?.() || 0) > (max.time?.toDate?.() || 0) ? current : max;
+		}, null);
+		return { sessionId, items, latest };
+	}).sort((a, b) => {
+		const aTime = a.latest?.time?.toDate?.() || 0;
+		const bTime = b.latest?.time?.toDate?.() || 0;
+		return bTime - aTime;
+	});
+
+	sessions.forEach(session => {
+		const sessionCorrect = session.items.filter(item => item.correct).length;
+		const sessionTotal = session.items.length;
+		const sessionWrong = sessionTotal - sessionCorrect;
+
 		const div = document.createElement("div");
 		div.className = "item is-clickable";
 		div.innerHTML = `
 			<div class="item-header">
 				<div>
-					<div class="item-title">${item.questionText || "Question"}</div>
-					<div class="item-meta">${formatTime(item.time)}</div>
+					<div class="item-title">Response ${session.sessionId}</div>
+					<div class="item-meta">${formatTime(session.latest?.time)}</div>
 				</div>
-				<div class="badge ${item.correct ? "status-good" : "status-bad"}">
-					${item.correct ? "Correct" : "Wrong"}
+				<div class="badge ${sessionWrong === 0 ? "status-good" : "status-bad"}">
+					${sessionCorrect} / ${sessionTotal}
 				</div>
 			</div>
-			<div class="item-meta">Answer: ${item.answer || "-"}</div>
+			<div class="item-meta">Correct: ${sessionCorrect} | Wrong: ${sessionWrong}</div>
 			<div class="item-details">
-				<div>Type: ${item.type || "-"}</div>
-				<div>User answer: ${item.answer || "-"}</div>
-				<div>Expected: ${item.correct ? "Matched" : "Not matched"}</div>
+				${session.items.map(item => `
+					<div><strong>${item.questionText || "Question"}</strong></div>
+					<div>Answer: ${item.answer || "-"}</div>
+					<div>Result: ${item.correct ? "Correct" : "Wrong"}</div>
+					<div class="item-meta">${formatTime(item.time)}</div>
+					<hr />
+				`).join("")}
 			</div>
 		`;
 		div.addEventListener("click", () => {
